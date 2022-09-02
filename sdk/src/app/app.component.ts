@@ -9,6 +9,13 @@ export class AppComponent {
   title = 'app';
   transformationOne = [{ height: "200", width: "200" }];
   path = "/default-image.jpg";
+  customXHR = new XMLHttpRequest();
+
+  ngOnInit(){
+    this.customXHR.upload.addEventListener("progress", function(e) {
+      console.log("progress", e);
+    });
+  }
 
   transformationTwo = [
     { height: "200", width: "200" },
@@ -28,5 +35,9 @@ export class AppComponent {
 
   handleFileInput(event) {
     console.log('This is the event on file change: ', event);
+  }
+
+  handleUplodeStart(file, xhr) {
+    console.log('This is the event on uplode start: ', file, xhr);
   }
 }

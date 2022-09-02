@@ -16,6 +16,8 @@ export class IkUploadComponent implements OnInit {
   @Output() onError: EventEmitter<any> = new EventEmitter();
   @Output() onSuccess: EventEmitter<any> = new EventEmitter();
   @Input() onFileInput: Function;
+  @Input() xhr: XMLHttpRequest;
+  @Input() onUplodeStart: Function;
   fileToUpload: File = null;
 
   constructor(private imagekit: ImagekitService) { }
@@ -26,13 +28,18 @@ export class IkUploadComponent implements OnInit {
   handleFileInput(e) {
     const onError = this.onError;
     const onSuccess = this.onSuccess;
+    const onUplodeStart = this.onUplodeStart;
     const files = e.target.files;
     this.fileToUpload = files.item(0);
+    const customXHR = (this.xhr) ? this.xhr :  new XMLHttpRequest();
     if (this.onFileInput) {
       this.onFileInput(e);
       return;
     }
-    const params = this.getUploadParams(this.fileToUpload, this.fileName, this.useUniqueFileName, this.tags, this.folder, this.isPrivateFile, this.customCoordinates, this.responseFields)
+    if (onUplodeStart) {
+      this.onUplodeStart(this.fileToUpload, customXHR);
+    }
+    const params = this.getUploadParams(this.fileToUpload, this.fileName, customXHR, this.useUniqueFileName, this.tags, this.folder, this.isPrivateFile, this.customCoordinates, this.responseFields)
     const ik = this.imagekit.ikInstance;
     ik.upload(params, function (err, result) {
       if (err) {
@@ -43,10 +50,11 @@ export class IkUploadComponent implements OnInit {
     });
   }
 
-  getUploadParams(file, fileName, useUniqueFileName?, tags?, folder?, isPrivateFile?, customCoordinates?, responseFields?) {
+  getUploadParams(file, fileName, customXHR, useUniqueFileName?, tags?, folder?, isPrivateFile?, customCoordinates?, responseFields?) {
     const params:object = {
       file: file,
       fileName: fileName,
+      xhr: customXHR,
     }
     if (useUniqueFileName !== undefined) {
       Object.assign(params, { useUniqueFileName: useUniqueFileName });
