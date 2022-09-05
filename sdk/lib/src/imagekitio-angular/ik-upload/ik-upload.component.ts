@@ -17,7 +17,7 @@ export class IkUploadComponent implements OnInit {
   @Output() onSuccess: EventEmitter<any> = new EventEmitter();
   @Input() onFileInput: Function;
   @Input() xhr: XMLHttpRequest;
-  @Input() onUplodeStart: Function;
+  @Input() onUploadStart: Function;
   fileToUpload: File = null;
 
   constructor(private imagekit: ImagekitService) { }
@@ -28,7 +28,7 @@ export class IkUploadComponent implements OnInit {
   handleFileInput(e) {
     const onError = this.onError;
     const onSuccess = this.onSuccess;
-    const onUplodeStart = this.onUplodeStart;
+    const onUploadStart = this.onUploadStart;
     const files = e.target.files;
     this.fileToUpload = files.item(0);
     const customXHR = (this.xhr) ? this.xhr :  new XMLHttpRequest();
@@ -36,8 +36,8 @@ export class IkUploadComponent implements OnInit {
       this.onFileInput(e);
       return;
     }
-    if (onUplodeStart) {
-      this.onUplodeStart(this.fileToUpload, customXHR);
+    if (onUploadStart) {
+      this.onUploadStart(this.fileToUpload, customXHR);
     }
     const params = this.getUploadParams(this.fileToUpload, this.fileName, customXHR, this.useUniqueFileName, this.tags, this.folder, this.isPrivateFile, this.customCoordinates, this.responseFields)
     const ik = this.imagekit.ikInstance;

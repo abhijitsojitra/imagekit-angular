@@ -37,7 +37,7 @@ export class AppComponent {
     console.log('This is the event on file change: ', event);
   }
 
-  handleUplodeStart(file, xhr) {
+  handleUploadStart(file, xhr) {
     console.log('This is the event on uplode start: ', file, xhr);
   }
 }
