@@ -17,7 +17,8 @@ export class IkUploadComponent implements OnInit {
   @Output() onSuccess: EventEmitter<any> = new EventEmitter();
   @Input() onFileInput: Function;
   @Input() xhr: XMLHttpRequest;
-  @Input() onUploadStart: Function;
+  @Input() onProgress: Function;
+  @Input() onValidate: Function;
   fileToUpload: File = null;
 
   constructor(private imagekit: ImagekitService) { }
@@ -28,26 +29,40 @@ export class IkUploadComponent implements OnInit {
   handleFileInput(e) {
     const onError = this.onError;
     const onSuccess = this.onSuccess;
-    const onUploadStart = this.onUploadStart;
+    const onProgress = this.onProgress;
+    const onValidate = this.onValidate;
     const files = e.target.files;
+    let isUploadAllowed = true;
     this.fileToUpload = files.item(0);
-    const customXHR = (this.xhr) ? this.xhr :  new XMLHttpRequest();
+    const customXHR = new XMLHttpRequest();
+    customXHR.upload.addEventListener("progress", function (e) {
+      if (onProgress) {
+        onProgress(e);
+      }
+    });
     if (this.onFileInput) {
       this.onFileInput(e);
       return;
     }
-    if (onUploadStart) {
-      this.onUploadStart(this.fileToUpload, customXHR);
-    }
-    const params = this.getUploadParams(this.fileToUpload, this.fileName, customXHR, this.useUniqueFileName, this.tags, this.folder, this.isPrivateFile, this.customCoordinates, this.responseFields)
-    const ik = this.imagekit.ikInstance;
-    ik.upload(params, function (err, result) {
-      if (err) {
-        onError.emit(err);
-      } else {
-        onSuccess.emit(result);
+    
+    if (onValidate) {
+      let returnValidate =  this.onValidate(this.fileToUpload);
+      if(returnValidate !== undefined && returnValidate === false){
+        isUploadAllowed = false;
       }
-    });
+    }
+    
+    if(isUploadAllowed){
+      const params = this.getUploadParams(this.fileToUpload, this.fileName, customXHR, this.useUniqueFileName, this.tags, this.folder, this.isPrivateFile, this.customCoordinates, this.responseFields)
+      const ik = this.imagekit.ikInstance;
+      ik.upload(params, function (err, result) {
+        if (err) {
+          onError.emit(err);
+        } else {
+          onSuccess.emit(result);
+        }
+      });
+    }
   }
 
   getUploadParams(file, fileName, customXHR, useUniqueFileName?, tags?, folder?, isPrivateFile?, customCoordinates?, responseFields?) {
