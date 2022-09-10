@@ -16,7 +16,6 @@ export class IkUploadComponent implements OnInit {
   @Output() onError: EventEmitter<any> = new EventEmitter();
   @Output() onSuccess: EventEmitter<any> = new EventEmitter();
   @Input() onFileInput: Function;
-  @Input() xhr: XMLHttpRequest;
   @Input() onProgress: Function;
   @Input() onValidate: Function;
   fileToUpload: File = null;
@@ -46,13 +45,13 @@ export class IkUploadComponent implements OnInit {
     }
     
     if (onValidate) {
-      let returnValidate =  this.onValidate(this.fileToUpload);
-      if(returnValidate !== undefined && returnValidate === false){
+      let returnValidate = this.onValidate(this.fileToUpload);
+      if (returnValidate !== undefined && returnValidate === false) {
         isUploadAllowed = false;
       }
     }
     
-    if(isUploadAllowed){
+    if (isUploadAllowed) {
       const params = this.getUploadParams(this.fileToUpload, this.fileName, customXHR, this.useUniqueFileName, this.tags, this.folder, this.isPrivateFile, this.customCoordinates, this.responseFields)
       const ik = this.imagekit.ikInstance;
       ik.upload(params, function (err, result) {

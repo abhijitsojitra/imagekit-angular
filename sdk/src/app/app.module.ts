@@ -9,9 +9,9 @@ import { ImagekitioAngularModule } from "../../lib/src/imagekitio-angular/imagek
   imports: [
     BrowserModule,
     ImagekitioAngularModule.forRoot({
-      urlEndpoint: "https://ik.imagekit.io/asdanp7f3",
-      publicKey: "public_bEMb/nYh6hxYL7zTTEeGVBB6kOU=",
-      authenticationEndpoint: "http://localhost:3000/auth"
+      urlEndpoint: "your_endpoint",
+      publicKey: "your_public_key",
+      authenticationEndpoint: "your_authentication_endpoint"
     })
   ],
   providers: [],
