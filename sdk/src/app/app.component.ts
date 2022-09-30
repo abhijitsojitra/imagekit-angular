@@ -29,4 +29,20 @@ export class AppComponent {
   handleFileInput(event) {
     console.log('This is the event on file change: ', event);
   }
+
+  handleOnValidate(file) {
+    console.log("This is the event on Validate start: ", file);
+    let fileSizeInBytes = file.size;
+    let mb = 10;
+    let MbToBytes = mb * 1000000;
+    if (fileSizeInBytes < MbToBytes) {
+      return true;
+    }
+    return false;
+  }
+
+  handleProgress(fileProgress) {
+    console.log("This is the event on progress uplode: ", fileProgress);
+    return false;
+  }
 }
